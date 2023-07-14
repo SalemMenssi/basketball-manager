@@ -13,4 +13,20 @@ MonoBehaviour:
   m_Name: UIViewIdDatabase
   m_EditorClassIdentifier: 
   Database:
-    Items: []
+    Items:
+    - Category: None
+      Name: None
+    - Category: ui
+      Name: mainMenu
+    - Category: ui
+      Name: match
+    - Category: ui
+      Name: setting
+    - Category: ui
+      Name: startMatch
+    - Category: ui
+      Name: store
+    - Category: ui
+      Name: team
+    - Category: ui
+      Name: trade

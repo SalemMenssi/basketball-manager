@@ -13,4 +13,22 @@ MonoBehaviour:
   m_Name: UIButtonIdDatabase
   m_EditorClassIdentifier: 
   Database:
-    Items: []
+    Items:
+    - Category: None
+      Name: None
+    - Category: ui
+      Name: back
+    - Category: ui
+      Name: match
+    - Category: ui
+      Name: play
+    - Category: ui
+      Name: profile
+    - Category: ui
+      Name: stats
+    - Category: ui
+      Name: store
+    - Category: ui
+      Name: team
+    - Category: ui
+      Name: trade
