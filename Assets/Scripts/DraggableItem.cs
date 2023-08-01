@@ -41,12 +41,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // Check if the item is outside the container.
-        if (!RectTransformUtility.RectangleContainsScreenPoint(containerParent.GetComponent<RectTransform>(), eventData.position, mainCamera))
-        {
-            // If the item is outside the container, return it to the original parent.
             rectTransform.SetParent(originalParent, true);
             rectTransform.localPosition = Vector3.zero;
-        }
+       
     }
 }
