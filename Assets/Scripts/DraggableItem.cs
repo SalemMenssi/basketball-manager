@@ -11,6 +11,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Camera mainCamera;
     private Transform containerParent;
 
+    
+
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -22,6 +24,14 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        GameObject SlotBox = GameObject.Find("stratigie");
+
+        Debug.Log(SlotBox.GetComponentInChildren<DropPlayerSlot>());
+        if (SlotBox.GetComponentInChildren<DropPlayerSlot>() != null)
+        {
+            SlotBox.GetComponentInChildren<DropPlayerSlot>().isOccupied = false;
+        }
+
         originalPosition = rectTransform.position;
         RectTransformUtility.ScreenPointToWorldPointInRectangle(rectTransform, eventData.position, mainCamera, out originalLocalPointerPosition);
 
@@ -41,12 +51,18 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // Check if the item is outside the container.
-        if (!RectTransformUtility.RectangleContainsScreenPoint(containerParent.GetComponent<RectTransform>(), eventData.position, mainCamera))
-        {
-            // If the item is outside the container, return it to the original parent.
-            rectTransform.SetParent(originalParent, true);
-            rectTransform.localPosition = Vector3.zero;
-        }
+        rectTransform.SetParent(originalParent, true);
+        rectTransform.localPosition = Vector3.zero;
+    }
+
+    public void ReturnToOriginalParent()
+    {
+        rectTransform.SetParent(originalParent, true);
+        rectTransform.localPosition = Vector3.zero;
+    }
+
+    public void SetNewParent(Transform newParent)
+    {
+        rectTransform.SetParent(newParent, false);
     }
 }
