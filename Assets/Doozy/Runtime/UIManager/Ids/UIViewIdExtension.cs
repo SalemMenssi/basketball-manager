@@ -26,6 +26,7 @@ namespace Doozy.Runtime.UIManager
     {
         public enum ui
         {
+            formation,
             mainMenu,
             match,
             setting,

@@ -5,37 +5,21 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 {
     private RectTransform rectTransform;
     private Transform originalParent;
-    private Vector3 originalLocalPointerPosition;
     private Vector3 originalPosition;
-    private Canvas canvas;
     private Camera mainCamera;
     private Transform containerParent;
-
-    
 
     void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
-        canvas = GetComponentInParent<Canvas>();
         mainCamera = Camera.main;
         originalParent = transform.parent;
-        containerParent = originalParent.parent.parent;
+        containerParent = originalParent.parent.parent.parent;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        GameObject SlotBox = GameObject.Find("stratigie");
-
-        Debug.Log(SlotBox.GetComponentInChildren<DropPlayerSlot>());
-        if (SlotBox.GetComponentInChildren<DropPlayerSlot>() != null)
-        {
-            SlotBox.GetComponentInChildren<DropPlayerSlot>().isOccupied = false;
-        }
-
         originalPosition = rectTransform.position;
-        RectTransformUtility.ScreenPointToWorldPointInRectangle(rectTransform, eventData.position, mainCamera, out originalLocalPointerPosition);
-
-        // Set the parent to the container during the drag to reparent the item.
         rectTransform.SetParent(containerParent, true);
     }
 
@@ -44,15 +28,59 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         Vector3 worldPointerPosition;
         if (RectTransformUtility.ScreenPointToWorldPointInRectangle(rectTransform, eventData.position, mainCamera, out worldPointerPosition))
         {
-            Vector3 offsetToOriginal = worldPointerPosition - originalLocalPointerPosition;
-            rectTransform.position = originalPosition + offsetToOriginal;
+            rectTransform.position = worldPointerPosition;
         }
     }
-
     public void OnEndDrag(PointerEventData eventData)
     {
-        rectTransform.SetParent(originalParent, true);
-        rectTransform.localPosition = Vector3.zero;
+        bool attached = false;
+        Transform newPositionMarker = null;
+
+        // Check if the draggable item is over a player position using bounds
+        foreach (Transform positionMarker in containerParent)
+        {
+            if (positionMarker.CompareTag("PlayerPosition"))
+            {
+                Collider2D positionCollider = positionMarker.GetComponent<Collider2D>();
+                Bounds positionBounds = positionCollider.bounds;
+
+                if (positionBounds.Contains(rectTransform.position))
+                {
+                    attached = true;
+                    newPositionMarker = positionMarker;
+                    break; // Exit the loop once a position is found
+                }
+            }
+        }
+
+        if (attached)
+        {
+            // Check if the new position marker already has a child
+            if (newPositionMarker.childCount > 0)
+            {
+                // Store the old child and its original parent
+                Transform oldChild = newPositionMarker.GetChild(0);
+                Transform oldChildOriginalParent = oldChild.GetComponent<DraggableItem>().originalParent;
+
+                // Set the new child (current draggable item) as the child of the position marker
+                rectTransform.SetParent(newPositionMarker, true);
+                rectTransform.localPosition = Vector3.zero;
+
+                // Return the old child to its original parent
+                oldChild.SetParent(oldChildOriginalParent, true);
+                oldChild.localPosition = Vector3.zero;
+            }
+            else
+            {
+                // Attach the current draggable item to the position marker
+                rectTransform.SetParent(newPositionMarker, true);
+                rectTransform.localPosition = Vector3.zero;
+            }
+        }
+        else
+        {
+            ReturnToOriginalParent();
+        }
     }
 
     public void ReturnToOriginalParent()
@@ -60,9 +88,5 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         rectTransform.SetParent(originalParent, true);
         rectTransform.localPosition = Vector3.zero;
     }
-
-    public void SetNewParent(Transform newParent)
-    {
-        rectTransform.SetParent(newParent, false);
-    }
+   
 }

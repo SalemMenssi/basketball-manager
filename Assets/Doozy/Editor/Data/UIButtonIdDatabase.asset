@@ -19,6 +19,8 @@ MonoBehaviour:
     - Category: ui
       Name: back
     - Category: ui
+      Name: formation
+    - Category: ui
       Name: match
     - Category: ui
       Name: play

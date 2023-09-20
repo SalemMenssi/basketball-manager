@@ -17,6 +17,8 @@ MonoBehaviour:
     - Category: None
       Name: None
     - Category: ui
+      Name: formation
+    - Category: ui
       Name: mainMenu
     - Category: ui
       Name: match
